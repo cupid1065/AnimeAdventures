@@ -1,141 +1,179 @@
--- KingzHub Script
--- Check for the current game and load respective features
+-- Setup for logging remotes
+local remoteLogs = {}
 
-local player = game.Players.LocalPlayer
-local gui = script.Parent -- Assuming the GUI is directly under the script
-local gameDetected = false
-
--- Function to hide or show the GUI
-local function toggleGuiVisibility()
-    gui.Visible = not gui.Visible
+local function logRemote(remoteName, remoteType, args)
+    table.insert(remoteLogs, {
+        remoteName = remoteName,
+        remoteType = remoteType,
+        args = args,
+        timestamp = tick()
+    })
 end
 
--- Detect the game
-if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Anime Adventures") then
-    gameDetected = true
+-- Monitor for any remote events or functions added to ReplicatedStorage
+game:GetService("ReplicatedStorage").ChildAdded:Connect(function(child)
+    if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
+        print("Remote detected: " .. child.Name)
 
-    -- Anime Adventures Features
-    -- Rollback Button
-    local rollbackButton = Instance.new("TextButton")
-    rollbackButton.Text = "Enable Rollback"
-    rollbackButton.Size = UDim2.new(0, 200, 0, 50)
-    rollbackButton.Position = UDim2.new(0, 10, 0, 60)
-    rollbackButton.Parent = gui
-    rollbackButton.MouseButton1Click:Connect(function()
-        -- Rollback functionality
-        print("Rollback enabled")
+        -- Log the event whenever it's triggered
+        if child:IsA("RemoteFunction") then
+            child.OnClientInvoke = function(...)
+                logRemote(child.Name, "RemoteFunction", {...})
+            end
+        elseif child:IsA("RemoteEvent") then
+            child.OnClientEvent:Connect(function(...)
+                logRemote(child.Name, "RemoteEvent", {...})
+            end)
+        end
+    end
+end)
+
+-- Simulate sending logs to a remote server (you can replace this with your server URL)
+local function sendLogsToServer()
+    local HttpService = game:GetService("HttpService")
+    local url = "https://your-server.com/upload-logs"  -- Replace with your actual URL for storing logs
+    local data = HttpService:JSONEncode(remoteLogs)
+
+    local success, response = pcall(function()
+        HttpService:PostAsync(url, data)
     end)
 
-    -- Trait Reroll Button
-    local traitRerollButton = Instance.new("TextButton")
-    traitRerollButton.Text = "Trait Reroll"
-    traitRerollButton.Size = UDim2.new(0, 200, 0, 50)
-    traitRerollButton.Position = UDim2.new(0, 10, 0, 120)
-    traitRerollButton.Parent = gui
-    traitRerollButton.MouseButton1Click:Connect(function()
-        -- Trigger trait reroll
-        local args = {
-            [1] = "{906b0464-73a4-45ce-8e0e-9ee68debf4d0}"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("endpoints"):WaitForChild("client_to_server"):WaitForChild("request_token_trait_reroll"):InvokeServer(unpack(args))
-        print("Trait rerolled!")
-    end)
-
-    -- Code Redemption Button (Bypass Level)
-    local redeemCodeButton = Instance.new("TextButton")
-    redeemCodeButton.Text = "Redeem Code"
-    redeemCodeButton.Size = UDim2.new(0, 200, 0, 50)
-    redeemCodeButton.Position = UDim2.new(0, 10, 0, 180)
-    redeemCodeButton.Parent = gui
-    redeemCodeButton.MouseButton1Click:Connect(function()
-        -- Redeem code with bypass
-        local args = {
-            [1] = "UPDATESOON5189"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("endpoints"):WaitForChild("client_to_server"):WaitForChild("redeem_code"):InvokeServer(unpack(args))
-        print("Code redeemed successfully!")
-    end)
-
-    -- Buy Summon Button
-    local buySummonButton = Instance.new("TextButton")
-    buySummonButton.Text = "Buy Summon"
-    buySummonButton.Size = UDim2.new(0, 200, 0, 50)
-    buySummonButton.Position = UDim2.new(0, 10, 0, 240)
-    buySummonButton.Parent = gui
-    buySummonButton.MouseButton1Click:Connect(function()
-        -- Buy summon logic
-        local args = {
-            [1] = "EventClover",
-            [2] = "gems"
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("endpoints"):WaitForChild("client_to_server"):WaitForChild("buy_from_banner"):InvokeServer(unpack(args))
-        print("Summon purchased!")
-    end)
-
-elseif game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Blue Lock Rivals") then
-    gameDetected = true
-
-    -- Blue Lock Rivals Features
-    -- Rollback Button
-    local rollbackButton = Instance.new("TextButton")
-    rollbackButton.Text = "Enable Rollback"
-    rollbackButton.Size = UDim2.new(0, 200, 0, 50)
-    rollbackButton.Position = UDim2.new(0, 10, 0, 60)
-    rollbackButton.Parent = gui
-    rollbackButton.MouseButton1Click:Connect(function()
-        -- Enable rollback for BLR
-        print("Rollback enabled for Blue Lock Rivals")
-    end)
-
-    -- Visual Changes for Spins and Money Button
-    local visualChangesButton = Instance.new("TextButton")
-    visualChangesButton.Text = "Change Spins & Money"
-    visualChangesButton.Size = UDim2.new(0, 200, 0, 50)
-    visualChangesButton.Position = UDim2.new(0, 10, 0, 120)
-    visualChangesButton.Parent = gui
-    visualChangesButton.MouseButton1Click:Connect(function()
-        -- Implement visual changes for BLR (spins and money)
-        print("Visual changes applied for spins and money")
-    end)
-
-    -- Teleport to Golden Wheel Button
-    local teleportButton = Instance.new("TextButton")
-    teleportButton.Text = "Teleport to Golden Wheel"
-    teleportButton.Size = UDim2.new(0, 200, 0, 50)
-    teleportButton.Position = UDim2.new(0, 10, 0, 180)
-    teleportButton.Parent = gui
-    teleportButton.MouseButton1Click:Connect(function()
-        -- Teleport logic for Blue Lock Rivals
-        print("Teleported to Golden Wheel!")
-    end)
+    if success then
+        print("Logs successfully sent to server.")
+    else
+        print("Failed to send logs: " .. response)
+    end
 end
 
--- GUI Loading Screen & Game Detection
-local loadingScreen = Instance.new("ScreenGui")
-loadingScreen.Name = "LoadingScreen"
-loadingScreen.Parent = player.PlayerGui
+-- Save logs to DataStore (if you don't have a server)
+local DataStoreService = game:GetService("DataStoreService")
+local remoteLogsStore = DataStoreService:GetDataStore("RemoteLogs")
 
-local loadingLabel = Instance.new("TextLabel")
-loadingLabel.Text = "Loading KingzHub..."
-loadingLabel.Size = UDim2.new(0, 300, 0, 50)
-loadingLabel.Position = UDim2.new(0.5, -150, 0.5, -25)
-loadingLabel.Parent = loadingScreen
+local function saveLogsToDataStore()
+    local success, errorMessage = pcall(function()
+        remoteLogsStore:SetAsync("remote_logs", remoteLogs)
+    end)
 
--- Simulate Loading Process
-wait(3) -- Simulating a loading time of 3 seconds
-loadingScreen:Destroy()
+    if success then
+        print("Logs successfully saved to DataStore.")
+    else
+        print("Error saving logs: " .. errorMessage)
+    end
+end
 
--- Toggle GUI Visibility
-local toggleButton = Instance.new("TextButton")
-toggleButton.Text = "Toggle GUI"
-toggleButton.Size = UDim2.new(0, 200, 0, 50)
-toggleButton.Position = UDim2.new(0, 10, 0, 300)
-toggleButton.Parent = gui
-toggleButton.MouseButton1Click:Connect(toggleGuiVisibility)
+-- Periodically send logs every 5 minutes (for both server and DataStore)
+while true do
+    wait(300)  -- Wait 5 minutes
+    sendLogsToServer()  -- Send logs to server
+    saveLogsToDataStore()  -- Save logs to DataStore
+end
 
--- Add a custom logo here if needed
-local customLogo = Instance.new("ImageLabel")
-customLogo.Image = "rbxassetid://your_image_asset_id"
-customLogo.Size = UDim2.new(0, 100, 0, 100)
-customLogo.Position = UDim2.new(0.5, -50, 0, 10)
-customLogo.Parent = gui
+-- Function for Anime Adventures rollback and trait reroll
+local function animeAdventuresRollback()
+    local args = {
+        [1] = "EventClover";
+        [2] = "gems";
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("buy_from_banner", 9e9):InvokeServer(unpack(args))
+    
+    -- Rejoin action for rollback
+    local rejoinArgs = {
+        [1] = "{906b0464-73a4-45ce-8e0e-9ee68debf4d0}";
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("request_token_trait_reroll", 9e9):InvokeServer(unpack(rejoinArgs))
+    
+    print("Anime Adventures rollback triggered")
+end
+
+-- Function for Blue Lock Rivals rollback and other actions
+local function blueLockRivalsRollback()
+    -- Here we handle the Blue Lock Rivals specific actions like rollback, visual change, spins, and money
+    -- Rejoin action (rejoin the server)
+    local rollbackArgs = {
+        [1] = "EventClover";
+        [2] = "gems";
+    }
+    
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("buy_from_banner", 9e9):InvokeServer(unpack(rollbackArgs))
+
+    -- Teleport or rejoin the server action
+    local teleportArgs = {
+        [1] = "teleportToGoldenWheel";
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("teleport", 9e9):InvokeServer(unpack(teleportArgs))
+    
+    print("Blue Lock Rivals rollback triggered and teleporting to golden wheel")
+end
+
+-- Function for trait reroll in Anime Adventures
+local function traitReroll()
+    local args = {
+        [1] = "{906b0464-73a4-45ce-8e0e-9ee68debf4d0}";
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("request_token_trait_reroll", 9e9):InvokeServer(unpack(args))
+    print("Trait reroll triggered in Anime Adventures")
+end
+
+-- Function for bypassing level requirements in Anime Adventures using redeem codes
+local function redeemCodeBypass(code)
+    local args = {
+        [1] = code;  -- code to redeem
+    }
+    game:GetService("ReplicatedStorage"):WaitForChild("endpoints", 9e9):WaitForChild("client_to_server", 9e9):WaitForChild("redeem_code", 9e9):InvokeServer(unpack(args))
+    print("Code redeemed: " .. code)
+end
+
+-- Auto Update Script feature
+local function checkForUpdates()
+    local HttpService = game:GetService("HttpService")
+    local updateUrl = "https://your-server.com/check-for-updates"  -- URL to check for script updates
+
+    local success, response = pcall(function()
+        return HttpService:GetAsync(updateUrl)
+    end)
+
+    if success then
+        local updateInfo = HttpService:JSONDecode(response)
+        if updateInfo.needsUpdate then
+            print("New version available! Updating...")
+            -- Perform update here (you would need a method to fetch and replace the script)
+        else
+            print("Your script is up to date!")
+        end
+    else
+        print("Failed to check for updates: " .. response)
+    end
+end
+
+-- Function to detect which game you're playing and load the appropriate script
+local function loadGameScript()
+    local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+
+    if gameName == "Anime Adventures" then
+        print("Loading Anime Adventures script...")
+        animeAdventuresRollback()  -- Trigger rollback for Anime Adventures
+        traitReroll()  -- Trigger trait reroll
+    elseif gameName == "Blue Lock Rivals" then
+        print("Loading Blue Lock Rivals script...")
+        blueLockRivalsRollback()  -- Trigger rollback for Blue Lock Rivals
+    else
+        print("No game-specific script found.")
+    end
+end
+
+-- Calling game script loader
+loadGameScript()
+
+-- Periodically check for updates every 10 minutes
+while true do
+    wait(600)  -- Wait 10 minutes
+    checkForUpdates()  -- Check for updates
+end
+
+-- Auto saving and logging functionalities
+while true do
+    wait(300)  -- Wait 5 minutes
+    sendLogsToServer()  -- Send logs to server
+    saveLogsToDataStore()  -- Save logs to DataStore
+end
