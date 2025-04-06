@@ -14,7 +14,7 @@ local frame = Instance.new("Frame")
 frame.Name = "MainFrame"
 frame.Size = UDim2.new(0, 500, 0, 300)
 frame.Position = UDim2.new(0.5, -250, 0.5, -150)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Dark gray background
 frame.BorderSizePixel = 0
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.Active = true
@@ -30,6 +30,7 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.TextSize = 24
 title.Font = Enum.Font.SourceSans
 title.TextStrokeTransparency = 0.8
+title.TextXAlignment = Enum.TextXAlignment.Center
 title.Parent = frame
 
 -- Create Tabs
@@ -77,6 +78,7 @@ mainContent.TextColor3 = Color3.fromRGB(255, 255, 255)
 mainContent.Font = Enum.Font.SourceSans
 mainContent.TextSize = 18
 mainContent.TextStrokeTransparency = 0.8
+mainContent.TextXAlignment = Enum.TextXAlignment.Center
 mainContent.Parent = contentFrame
 
 -- Misc Content
