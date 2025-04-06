@@ -1,148 +1,146 @@
--- KingzHub Script (Keyless Version)
+-- KingzHub (Keyless Version)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
--- UI Library and Functions
-local player = game.Players.LocalPlayer
+-- Create Main ScreenGui
 local gui = Instance.new("ScreenGui")
-local mainFrame = Instance.new("Frame")
-local titleLabel = Instance.new("TextLabel")
-local inputBox = Instance.new("TextBox")
-local fpsCapInput = Instance.new("TextBox")
-local styleInput = Instance.new("TextBox")
-local toggleButton = Instance.new("TextButton")
-local traitRerollToggle = Instance.new("TextButton")
-local visualStyleButton = Instance.new("TextButton")
-local loadingScreen = Instance.new("Frame")
-local loadingText = Instance.new("TextLabel")
-
 gui.Name = "KingzHub"
-gui.Parent = player:WaitForChild("PlayerGui")
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = game.CoreGui
 
--- Main Frame Setup (Modern Style)
-mainFrame.Name = "MainFrame"
-mainFrame.Parent = gui
-mainFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 28) -- Dark background for modern look
-mainFrame.Size = UDim2.new(0, 500, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
-mainFrame.BorderSizePixel = 0
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+-- Center Function
+local function centerGui(guiElement)
+	local screenSize = gui.AbsoluteSize
+	local guiSize = guiElement.AbsoluteSize
+	guiElement.Position = UDim2.new(0.5, -guiSize.X.Offset/2, 0.5, -guiSize.Y.Offset/2)
+end
 
--- Title Setup
-titleLabel.Name = "Title"
-titleLabel.Parent = mainFrame
-titleLabel.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
-titleLabel.Size = UDim2.new(1, 0, 0, 40)
-titleLabel.Text = "KingzHub"
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-titleLabel.TextSize = 30
-titleLabel.TextAlignment = Enum.TextAlignment.Center
-titleLabel.Font = Enum.Font.GothamBold
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Size = UDim2.new(0, 500, 0, 350)
+frame.Position = UDim2.new(0.5, -250, 0.5, -175)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+frame.Parent = gui
 
--- Draggable Feature
-mainFrame.Active = true
-mainFrame.Draggable = true
+-- Center the GUI
+centerGui(frame)
 
--- Keyless UI Input Setup (For FPS Cap and Visual Style Change)
-fpsCapInput.Name = "FpsCapInput"
-fpsCapInput.Parent = mainFrame
-fpsCapInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)  -- Darker input box
-fpsCapInput.Size = UDim2.new(0, 200, 0, 40)
-fpsCapInput.Position = UDim2.new(0.5, -100, 0.3, 0)
-fpsCapInput.PlaceholderText = "Enter FPS Cap"
-fpsCapInput.TextSize = 20
-fpsCapInput.Font = Enum.Font.Gotham
-fpsCapInput.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+-- Drag Functionality
+local dragBar = Instance.new("TextLabel")
+dragBar.Text = "🇰 🇮 🇳 🇬 🇿 🇭 🇺 🇧"
+dragBar.Size = UDim2.new(1, 0, 0, 35)
+dragBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+dragBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+dragBar.Font = Enum.Font.GothamBlack
+dragBar.TextSize = 20
+dragBar.Parent = frame
+dragBar.Active = true
+dragBar.Draggable = true
 
--- Visual Style Input Box
-styleInput.Name = "StyleInput"
-styleInput.Parent = mainFrame
-styleInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)  -- Darker input box
-styleInput.Size = UDim2.new(0, 200, 0, 40)
-styleInput.Position = UDim2.new(0.5, -100, 0.4, 0)
-styleInput.PlaceholderText = "Enter Visual Style"
-styleInput.TextSize = 20
-styleInput.Font = Enum.Font.Gotham
-styleInput.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+-- FPS Cap Input
+local fpsLabel = Instance.new("TextLabel")
+fpsLabel.Text = "FPS Cap:"
+fpsLabel.Font = Enum.Font.Gotham
+fpsLabel.TextSize = 16
+fpsLabel.TextColor3 = Color3.new(1, 1, 1)
+fpsLabel.Size = UDim2.new(0, 100, 0, 25)
+fpsLabel.Position = UDim2.new(0, 10, 0, 50)
+fpsLabel.BackgroundTransparency = 1
+fpsLabel.Parent = frame
 
--- Toggle Button (For enabling/disabling features)
-toggleButton.Name = "ToggleButton"
-toggleButton.Parent = mainFrame
-toggleButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)  -- Green button
-toggleButton.Size = UDim2.new(0, 200, 0, 40)
-toggleButton.Position = UDim2.new(0.5, -100, 0.5, 0)
-toggleButton.Text = "Enable Features"
-toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-toggleButton.TextSize = 20
-toggleButton.Font = Enum.Font.Gotham
+local fpsInput = Instance.new("TextBox")
+fpsInput.Size = UDim2.new(0, 100, 0, 25)
+fpsInput.Position = UDim2.new(0, 110, 0, 50)
+fpsInput.Text = "60"
+fpsInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+fpsInput.TextColor3 = Color3.new(1, 1, 1)
+fpsInput.Font = Enum.Font.GothamBold
+fpsInput.TextSize = 14
+fpsInput.ClearTextOnFocus = false
+fpsInput.Parent = frame
+
+fpsInput.FocusLost:Connect(function()
+	local fps = tonumber(fpsInput.Text)
+	if fps then
+		setfpscap(fps)
+	end
+end)
 
 -- Trait Reroll Toggle
-traitRerollToggle.Name = "TraitRerollToggle"
-traitRerollToggle.Parent = mainFrame
-traitRerollToggle.BackgroundColor3 = Color3.fromRGB(76, 175, 80)  -- Green button
-traitRerollToggle.Size = UDim2.new(0, 200, 0, 40)
-traitRerollToggle.Position = UDim2.new(0.5, -100, 0.6, 0)
-traitRerollToggle.Text = "Enable Trait Reroll"
-traitRerollToggle.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-traitRerollToggle.TextSize = 20
-traitRerollToggle.Font = Enum.Font.Gotham
+local rerollLabel = Instance.new("TextLabel")
+rerollLabel.Text = "Trait Reroll Enabled:"
+rerollLabel.Font = Enum.Font.Gotham
+rerollLabel.TextSize = 16
+rerollLabel.TextColor3 = Color3.new(1, 1, 1)
+rerollLabel.Size = UDim2.new(0, 180, 0, 25)
+rerollLabel.Position = UDim2.new(0, 10, 0, 90)
+rerollLabel.BackgroundTransparency = 1
+rerollLabel.Parent = frame
 
--- Visual Style Button
-visualStyleButton.Name = "VisualStyleButton"
-visualStyleButton.Parent = mainFrame
-visualStyleButton.BackgroundColor3 = Color3.fromRGB(76, 175, 80)  -- Green button
-visualStyleButton.Size = UDim2.new(0, 200, 0, 40)
-visualStyleButton.Position = UDim2.new(0.5, -100, 0.7, 0)
-visualStyleButton.Text = "Change Visuals"
-visualStyleButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-visualStyleButton.TextSize = 20
-visualStyleButton.Font = Enum.Font.Gotham
+local rerollToggle = Instance.new("TextButton")
+rerollToggle.Text = "OFF"
+rerollToggle.Size = UDim2.new(0, 50, 0, 25)
+rerollToggle.Position = UDim2.new(0, 200, 0, 90)
+rerollToggle.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+rerollToggle.TextColor3 = Color3.new(1, 1, 1)
+rerollToggle.Font = Enum.Font.GothamBold
+rerollToggle.TextSize = 14
+rerollToggle.Parent = frame
 
--- Loading Screen Setup
-loadingScreen.Name = "LoadingScreen"
-loadingScreen.Parent = gui
-loadingScreen.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-loadingScreen.Size = UDim2.new(1, 0, 1, 0)
-loadingScreen.Visible = true
-
-loadingText.Name = "LoadingText"
-loadingText.Parent = loadingScreen
-loadingText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-loadingText.Size = UDim2.new(1, 0, 0, 50)
-loadingText.Position = UDim2.new(0, 0, 0.5, -25)
-loadingText.Text = "Loading..."
-loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
-loadingText.TextSize = 30
-loadingText.TextAlignment = Enum.TextAlignment.Center
-loadingText.Font = Enum.Font.Gotham
-
--- Functions to Update UI Elements
-toggleButton.MouseButton1Click:Connect(function()
-    print("Features Enabled")
-    -- Add specific feature logic here, like activating reroll
+local rerollEnabled = false
+rerollToggle.MouseButton1Click:Connect(function()
+	rerollEnabled = not rerollEnabled
+	rerollToggle.Text = rerollEnabled and "ON" or "OFF"
+	rerollToggle.BackgroundColor3 = rerollEnabled and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(100, 0, 0)
 end)
 
-traitRerollToggle.MouseButton1Click:Connect(function()
-    print("Trait Reroll Enabled")
-    -- Add trait reroll functionality here
-end)
+-- Visual Style Input
+local visualLabel = Instance.new("TextLabel")
+visualLabel.Text = "Visual Style:"
+visualLabel.Font = Enum.Font.Gotham
+visualLabel.TextSize = 16
+visualLabel.TextColor3 = Color3.new(1, 1, 1)
+visualLabel.Size = UDim2.new(0, 120, 0, 25)
+visualLabel.Position = UDim2.new(0, 10, 0, 130)
+visualLabel.BackgroundTransparency = 1
+visualLabel.Parent = frame
 
-visualStyleButton.MouseButton1Click:Connect(function()
-    local visualStyle = styleInput.Text
-    print("Changing Visuals to: " .. visualStyle)
-    -- Apply visuals based on input (Spin, Flow, Lucky, Normal, Money styles)
-end)
+local visualInput = Instance.new("TextBox")
+visualInput.Size = UDim2.new(0, 120, 0, 25)
+visualInput.Position = UDim2.new(0, 130, 0, 130)
+visualInput.Text = "normal"
+visualInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+visualInput.TextColor3 = Color3.new(1, 1, 1)
+visualInput.Font = Enum.Font.GothamBold
+visualInput.TextSize = 14
+visualInput.ClearTextOnFocus = false
+visualInput.Parent = frame
 
-fpsCapInput.FocusLost:Connect(function()
-    local fpsCap = tonumber(fpsCapInput.Text)
-    if fpsCap then
-        print("FPS Cap set to: " .. fpsCap)
-        -- Apply FPS cap logic
-    else
-        print("Invalid FPS Cap")
-    end
-end)
+-- Detected Game Label
+local gameLabel = Instance.new("TextLabel")
+gameLabel.Text = "Detecting Game..."
+gameLabel.Font = Enum.Font.Gotham
+gameLabel.TextSize = 14
+gameLabel.TextColor3 = Color3.new(1, 1, 1)
+gameLabel.Size = UDim2.new(1, -10, 0, 25)
+gameLabel.Position = UDim2.new(0, 5, 1, -30)
+gameLabel.BackgroundTransparency = 1
+gameLabel.TextXAlignment = Enum.TextXAlignment.Right
+gameLabel.Parent = frame
 
--- Hide loading screen after 3 seconds
-wait(3)
-loadingScreen.Visible = false
-mainFrame.Visible = true
+-- Game Detection Logic
+local placeId = game.PlaceId
+if placeId == 117965110267191 then
+	gameLabel.Text = "Game Detected: Anime Adventures"
+elseif placeId == 18668065416 then
+	gameLabel.Text = "Game Detected: Blue Lock Rivals"
+else
+	gameLabel.Text = "Game Not Detected"
+end
+
+-- More features can be added below here
