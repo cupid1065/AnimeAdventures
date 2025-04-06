@@ -32,103 +32,88 @@ title.Font = Enum.Font.GothamBlack
 title.TextStrokeTransparency = 0.8
 title.Parent = frame
 
--- FPS Label
-local fpsLabel = Instance.new("TextLabel")
-fpsLabel.Text = "FPS Cap:"
-fpsLabel.Size = UDim2.new(0, 100, 0, 25)
-fpsLabel.Position = UDim2.new(0, 20, 0, 60)
-fpsLabel.BackgroundTransparency = 1
-fpsLabel.TextColor3 = Color3.new(1, 1, 1)
-fpsLabel.Font = Enum.Font.Gotham
-fpsLabel.TextSize = 16
-fpsLabel.Parent = frame
+-- Create Tabs
+local tabFrame = Instance.new("Frame")
+tabFrame.Name = "TabFrame"
+tabFrame.Size = UDim2.new(0, 500, 0, 30)
+tabFrame.Position = UDim2.new(0, 0, 0, 40)
+tabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+tabFrame.BorderSizePixel = 0
+tabFrame.Parent = frame
 
--- FPS Input
-local fpsInput = Instance.new("TextBox")
-fpsInput.Size = UDim2.new(0, 80, 0, 25)
-fpsInput.Position = UDim2.new(0, 130, 0, 60)
-fpsInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-fpsInput.TextColor3 = Color3.new(1, 1, 1)
-fpsInput.Font = Enum.Font.GothamBold
-fpsInput.TextSize = 14
-fpsInput.Text = "60"
-fpsInput.ClearTextOnFocus = false
-fpsInput.Parent = frame
-
-fpsInput.FocusLost:Connect(function()
-	local cap = tonumber(fpsInput.Text)
-	if cap then
-		setfpscap(cap)
-	end
-end)
-
--- Reroll Toggle
-local rerollLabel = Instance.new("TextLabel")
-rerollLabel.Text = "Trait Reroll:"
-rerollLabel.Size = UDim2.new(0, 120, 0, 25)
-rerollLabel.Position = UDim2.new(0, 20, 0, 100)
-rerollLabel.BackgroundTransparency = 1
-rerollLabel.TextColor3 = Color3.new(1, 1, 1)
-rerollLabel.Font = Enum.Font.Gotham
-rerollLabel.TextSize = 16
-rerollLabel.Parent = frame
-
-local toggle = Instance.new("TextButton")
-toggle.Size = UDim2.new(0, 80, 0, 25)
-toggle.Position = UDim2.new(0, 130, 0, 100)
-toggle.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
-toggle.Text = "OFF"
-toggle.TextColor3 = Color3.new(1, 1, 1)
-toggle.Font = Enum.Font.GothamBold
-toggle.TextSize = 14
-toggle.Parent = frame
-
-local enabled = false
-toggle.MouseButton1Click:Connect(function()
-	enabled = not enabled
-	toggle.Text = enabled and "ON" or "OFF"
-	toggle.BackgroundColor3 = enabled and Color3.fromRGB(0, 120, 0) or Color3.fromRGB(100, 0, 0)
-end)
-
--- Visual Style Input
-local visualLabel = Instance.new("TextLabel")
-visualLabel.Text = "Visual Style:"
-visualLabel.Size = UDim2.new(0, 120, 0, 25)
-visualLabel.Position = UDim2.new(0, 20, 0, 140)
-visualLabel.BackgroundTransparency = 1
-visualLabel.TextColor3 = Color3.new(1, 1, 1)
-visualLabel.Font = Enum.Font.Gotham
-visualLabel.TextSize = 16
-visualLabel.Parent = frame
-
-local visualInput = Instance.new("TextBox")
-visualInput.Size = UDim2.new(0, 120, 0, 25)
-visualInput.Position = UDim2.new(0, 130, 0, 140)
-visualInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-visualInput.TextColor3 = Color3.new(1, 1, 1)
-visualInput.Font = Enum.Font.GothamBold
-visualInput.TextSize = 14
-visualInput.Text = "normal"
-visualInput.ClearTextOnFocus = false
-visualInput.Parent = frame
-
--- Game Detected
-local gameLabel = Instance.new("TextLabel")
-gameLabel.Size = UDim2.new(1, -10, 0, 25)
-gameLabel.Position = UDim2.new(0, 5, 1, -30)
-gameLabel.TextColor3 = Color3.new(1, 1, 1)
-gameLabel.BackgroundTransparency = 1
-gameLabel.TextXAlignment = Enum.TextXAlignment.Right
-gameLabel.TextSize = 14
-gameLabel.Font = Enum.Font.Gotham
-gameLabel.Parent = frame
-
--- Game Detection
-local placeId = game.PlaceId
-if placeId == 117965110267191 then
-	gameLabel.Text = "Game: Anime Adventures"
-elseif placeId == 18668065416 then
-	gameLabel.Text = "Game: Blue Lock Rivals"
-else
-	gameLabel.Text = "Game: Unknown"
+-- Tab Buttons
+local function createTabButton(text, position)
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(0, 100, 0, 30)
+    tabButton.Position = position
+    tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tabButton.Text = text
+    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabButton.Font = Enum.Font.Gotham
+    tabButton.TextSize = 16
+    tabButton.TextStrokeTransparency = 0.8
+    tabButton.Parent = tabFrame
+    return tabButton
 end
+
+local tab1Button = createTabButton("Tab 1", UDim2.new(0, 0, 0, 0))
+local tab2Button = createTabButton("Tab 2", UDim2.new(0, 100, 0, 0))
+local tab3Button = createTabButton("Tab 3", UDim2.new(0, 200, 0, 0))
+
+-- Content Frame
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1, 0, 1, -70)
+contentFrame.Position = UDim2.new(0, 0, 0, 70)
+contentFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+contentFrame.BorderSizePixel = 0
+contentFrame.Parent = frame
+
+-- Tab Content
+local tab1Content = Instance.new("TextLabel")
+tab1Content.Size = UDim2.new(1, 0, 1, 0)
+tab1Content.BackgroundTransparency = 1
+tab1Content.Text = "This is Tab 1"
+tab1Content.TextColor3 = Color3.fromRGB(255, 255, 255)
+tab1Content.Font = Enum.Font.Gotham
+tab1Content.TextSize = 18
+tab1Content.TextStrokeTransparency = 0.8
+tab1Content.Parent = contentFrame
+
+local tab2Content = tab1Content:Clone()
+tab2Content.Text = "This is Tab 2"
+tab2Content.Parent = contentFrame
+tab2Content.Visible = false
+
+local tab3Content = tab1Content:Clone()
+tab3Content.Text = "This is Tab 3"
+tab3Content.Parent = contentFrame
+tab3Content.Visible = false
+
+-- Switch Tabs
+local function switchTab(tabNumber)
+    if tabNumber == 1 then
+        tab1Content.Visible = true
+        tab2Content.Visible = false
+        tab3Content.Visible = false
+    elseif tabNumber == 2 then
+        tab1Content.Visible = false
+        tab2Content.Visible = true
+        tab3Content.Visible = false
+    elseif tabNumber == 3 then
+        tab1Content.Visible = false
+        tab2Content.Visible = false
+        tab3Content.Visible = true
+    end
+end
+
+tab1Button.MouseButton1Click:Connect(function()
+    switchTab(1)
+end)
+
+tab2Button.MouseButton1Click:Connect(function()
+    switchTab(2)
+end)
+
+tab3Button.MouseButton1Click:Connect(function()
+    switchTab(3)
+end)
