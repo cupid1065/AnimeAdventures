@@ -1,6 +1,7 @@
 -- KingzHub Final UI (Keyless)
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
 
 -- Main GUI
 local gui = Instance.new("ScreenGui")
@@ -8,6 +9,44 @@ gui.Name = "KingzHub"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.Parent = game.CoreGui
+
+-- Key System Frame
+local keyFrame = Instance.new("Frame")
+keyFrame.Name = "KeyFrame"
+keyFrame.Size = UDim2.new(0, 300, 0, 150)
+keyFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+keyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+keyFrame.BorderSizePixel = 0
+keyFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+keyFrame.Parent = gui
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(0, 200, 0, 50)
+keyBox.Position = UDim2.new(0.5, -100, 0.5, -25)
+keyBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.TextSize = 20
+keyBox.PlaceholderText = "Enter Key"
+keyBox.Parent = keyFrame
+
+local keyButton = Instance.new("TextButton")
+keyButton.Size = UDim2.new(0, 100, 0, 50)
+keyButton.Position = UDim2.new(0.5, -50, 0.5, 35)
+keyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+keyButton.Text = "Submit"
+keyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyButton.TextSize = 20
+keyButton.Parent = keyFrame
+
+keyButton.MouseButton1Click:Connect(function()
+    if keyBox.Text == "king" then
+        keyFrame.Visible = false
+        -- Show the main GUI
+        frame.Visible = true
+    else
+        keyBox.Text = "Invalid Key"
+    end
+end)
 
 -- Main Frame
 local frame = Instance.new("Frame")
@@ -20,6 +59,7 @@ frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
+frame.Visible = false
 
 -- Title Bar
 local title = Instance.new("TextLabel")
@@ -151,3 +191,56 @@ end)
 settingsButton.MouseButton1Click:Connect(function()
     switchTab("Settings")
 end)
+
+-- Modernize GUI
+local function modernizeGui()
+    -- Example modernizations: rounded corners, drop shadows, etc.
+    local function addUICorner(instance, radius)
+        local uiCorner = Instance.new("UICorner")
+        uiCorner.CornerRadius = UDim.new(0, radius)
+        uiCorner.Parent = instance
+    end
+
+    local function addUIStroke(instance, color, thickness)
+        local uiStroke = Instance.new("UIStroke")
+        uiStroke.Color = color
+        uiStroke.Thickness = thickness
+        uiStroke.Parent = instance
+    end
+
+    local function addUIPadding(instance, padding)
+        local uiPadding = Instance.new("UIPadding")
+        uiPadding.PaddingTop = UDim.new(0, padding)
+        uiPadding.PaddingBottom = UDim.new(0, padding)
+        uiPadding.PaddingLeft = UDim.new(0, padding)
+        uiPadding.PaddingRight = UDim.new(0, padding)
+        uiPadding.Parent = instance
+    end
+
+    -- Apply modernizations
+    addUICorner(frame, 10)
+    addUICorner(tabFrame, 10)
+    addUICorner(contentFrame, 10)
+    addUICorner(keyFrame, 10)
+    addUICorner(keyBox, 10)
+    addUICorner(keyButton, 10)
+    addUICorner(rollbackButton, 10)
+
+    addUIStroke(frame, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(tabFrame, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(contentFrame, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(keyFrame, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(keyBox, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(keyButton, Color3.fromRGB(255, 255, 255), 2)
+    addUIStroke(rollbackButton, Color3.fromRGB(255, 255, 255), 2)
+
+    addUIPadding(frame, 10)
+    addUIPadding(tabFrame, 5)
+    addUIPadding(contentFrame, 10)
+    addUIPadding(keyFrame, 10)
+    addUIPadding(keyBox, 5)
+    addUIPadding(keyButton, 5)
+    addUIPadding(rollbackButton, 5)
+end
+
+modernizeGui()
